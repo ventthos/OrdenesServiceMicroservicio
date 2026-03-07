@@ -18,8 +18,8 @@ public class CreateOrderService {
                 .orderDate(data.getOrderDate())
                 .totalAmount(data.getTotalAmount())
                 .status(data.getStatus())
-                .userId(data.getUserId())
-                .products(data.getProducts()) // Mapea la lista de ProductItem directamente
+                .user(data.getUserId())
+                .products(data.getProducts())
                 .build();
 
         return orderRepository.save(order);

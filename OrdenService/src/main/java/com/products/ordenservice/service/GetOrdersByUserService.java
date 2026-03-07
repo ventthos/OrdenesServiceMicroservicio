@@ -17,7 +17,6 @@ public class GetOrdersByUserService {
         List<Order> orders = orderRepository.findByUser(userEmail);
 
         if (orders.isEmpty()) {
-            // Opcional: Podrías lanzar una excepción o simplemente devolver la lista vacía
             throw new RuntimeException("No se encontraron órdenes para el usuario: " + userEmail);
         }
 

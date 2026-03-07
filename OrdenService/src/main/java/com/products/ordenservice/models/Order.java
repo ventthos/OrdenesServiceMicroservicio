@@ -21,7 +21,7 @@ public class Order {
     private String orderDate;
     private Double totalAmount;
     private String status;
-    private String userId;
+    private String user;
 
     // Relación anidada
     private List<ProductItem> products;
