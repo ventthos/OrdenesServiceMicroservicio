@@ -1,6 +1,6 @@
-package com.products.ordenservice.repository;
+package com.ordenes.ordenservice.repository;
 
-import com.products.ordenservice.models.Order;
+import com.ordenes.ordenservice.models.Order;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

@@ -1,8 +1,8 @@
-package com.products.ordenservice.service;
+package com.ordenes.ordenservice.service;
 
-import com.products.ordenservice.dto.CreateOrderDto;
-import com.products.ordenservice.models.Order;
-import com.products.ordenservice.repository.OrdenRepository;
+import com.ordenes.ordenservice.dto.CreateOrderDto;
+import com.ordenes.ordenservice.models.Order;
+import com.ordenes.ordenservice.repository.OrdenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.products.ordenservice.response;
+package com.ordenes.ordenservice.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

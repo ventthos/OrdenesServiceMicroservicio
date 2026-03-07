@@ -1,4 +1,4 @@
-package com.products.ordenservice;
+package com.ordenes.ordenservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

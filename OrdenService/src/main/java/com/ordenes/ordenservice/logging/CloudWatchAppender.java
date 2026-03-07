@@ -1,4 +1,4 @@
-package com.products.ordenservice.logging;
+package com.ordenes.ordenservice.logging;
 
 
 import org.apache.logging.log4j.core.*;

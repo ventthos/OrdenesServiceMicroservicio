@@ -1,4 +1,4 @@
-package com.products.ordenservice.models;
+package com.ordenes.ordenservice.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

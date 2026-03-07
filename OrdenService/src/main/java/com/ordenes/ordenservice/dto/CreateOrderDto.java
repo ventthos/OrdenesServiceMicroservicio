@@ -1,6 +1,6 @@
-package com.products.ordenservice.dto;
+package com.ordenes.ordenservice.dto;
 
-import com.products.ordenservice.models.ProductItem;
+import com.ordenes.ordenservice.models.ProductItem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

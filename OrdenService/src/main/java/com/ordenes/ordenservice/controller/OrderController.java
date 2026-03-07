@@ -1,13 +1,13 @@
-package com.products.ordenservice.controller;
+package com.ordenes.ordenservice.controller;
 
-import com.products.ordenservice.dto.CreateOrderDto;
-import com.products.ordenservice.dto.UpdateOrderStatusDto;
-import com.products.ordenservice.models.Order;
-import com.products.ordenservice.response.GeneralResponse;
-import com.products.ordenservice.service.CreateOrderService;
-import com.products.ordenservice.service.GetOrderByIdService;
-import com.products.ordenservice.service.GetOrdersByUserService;
-import com.products.ordenservice.service.UpdateOrderStatusService;
+import com.ordenes.ordenservice.dto.CreateOrderDto;
+import com.ordenes.ordenservice.dto.UpdateOrderStatusDto;
+import com.ordenes.ordenservice.models.Order;
+import com.ordenes.ordenservice.response.GeneralResponse;
+import com.ordenes.ordenservice.service.CreateOrderService;
+import com.ordenes.ordenservice.service.GetOrderByIdService;
+import com.ordenes.ordenservice.service.GetOrdersByUserService;
+import com.ordenes.ordenservice.service.UpdateOrderStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,8 +1,8 @@
-package com.products.ordenservice.service;
+package com.ordenes.ordenservice.service;
 
-import com.products.ordenservice.dto.UpdateOrderStatusDto;
-import com.products.ordenservice.models.Order;
-import com.products.ordenservice.repository.OrdenRepository;
+import com.ordenes.ordenservice.dto.UpdateOrderStatusDto;
+import com.ordenes.ordenservice.models.Order;
+import com.ordenes.ordenservice.repository.OrdenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public class UpdateOrderStatusService {
                 .orElseThrow(() -> new RuntimeException("No se encontró la orden con ID: " + id));
 
         order.setStatus(data.getStatus());
-        
+
         return orderRepository.save(order);
     }
 }
