@@ -17,7 +17,7 @@ public class Order {
     @Id
     private String id; // ID interno de MongoDB
 
-    private String ordeCode; // Nota: Mantengo el typo 'ordeCode' de tu imagen
+    private String orderCode; // Nota: Mantengo el typo 'ordeCode' de tu imagen
     private String orderDate;
     private Double totalAmount;
     private String status;

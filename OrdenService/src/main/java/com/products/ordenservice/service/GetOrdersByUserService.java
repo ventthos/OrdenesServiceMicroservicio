@@ -1,0 +1,26 @@
+package com.products.ordenservice.service;
+
+import com.products.ordenservice.models.Order;
+import com.products.ordenservice.repository.OrdenRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@RequiredArgsConstructor
+@Service
+public class GetOrdersByUserService {
+
+    private final OrdenRepository orderRepository;
+
+    public List<Order> execute(String userEmail) {
+        List<Order> orders = orderRepository.findByUser(userEmail);
+
+        if (orders.isEmpty()) {
+            // Opcional: Podrías lanzar una excepción o simplemente devolver la lista vacía
+            throw new RuntimeException("No se encontraron órdenes para el usuario: " + userEmail);
+        }
+
+        return orders;
+    }
+}
