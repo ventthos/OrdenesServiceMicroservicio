@@ -3,16 +3,30 @@ package com.ordenes.ordenservice.service;
 import com.ordenes.ordenservice.models.Order;
 import com.ordenes.ordenservice.repository.OrdenRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class GetOrderByIdService {
 
     private final OrdenRepository orderRepository;
 
     public Order execute(String id) {
+        log.info("Consultando información de la orden con ID: {}", id);
+
         return orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Orden no encontrada con el ID: " + id));
+                .map(order -> {
+                    log.info("Orden {} recuperada exitosamente. Total: ${}",
+                            order.getOrderCode(), order.getTotalAmount());
+                    return order;
+                })
+                .orElseThrow(() -> {
+                    log.warn("Fallo de consulta: No se encontró ninguna orden con el ID: {}", id);
+                    return new NoSuchElementException("Orden no encontrada con el ID: " + id);
+                });
     }
 }

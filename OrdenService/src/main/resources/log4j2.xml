@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration packages="product.productservice.logging">
+<Configuration packages="com.ordenes.ordenservice.logging">
     <Appenders>
 
         <Console name="Console" target="SYSTEM_OUT">
@@ -7,8 +7,8 @@
         </Console>
 
         <CloudWatchAppender name="CloudWatch"
-                            logGroupName="/mi-app-test/logs"
-                            logStreamName="servicioProductos"
+                            logGroupName="/examenU1/ordenes-log-group"
+                            logStreamName="microservicio-ordenes"
                             endpoint="http://localstack:4566">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level - %msg%n" />
         </CloudWatchAppender>
