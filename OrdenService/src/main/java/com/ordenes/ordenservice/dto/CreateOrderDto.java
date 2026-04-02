@@ -18,6 +18,7 @@ public class CreateOrderDto {
     private Double totalAmount;
     private String status;
     private String userId;
+    private boolean fromRetry;
 
     // Relación anidada
     private List<ProductItem> products;

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class CreateOrderService {
 
     private final OrdenRepository orderRepository;
-
+    private final OrdenProducer ordenProducer;
     public Order execute(CreateOrderDto data) {
         log.info("Recibida solicitud para crear orden. Código: {}, Usuario: {}",
                 data.getOrderCode(), data.getUserId());
@@ -41,6 +41,9 @@ public class CreateOrderService {
 
         } catch (Exception e) {
             log.error("Fallo al persistir la orden {}. Error: {}", data.getOrderCode(), e.getMessage(), e);
+            if (!data.isFromRetry()) {
+                ordenProducer.sendToRetry(data);
+            }
             throw new RuntimeException("Error al crear la orden en el sistema", e);
         }
     }
