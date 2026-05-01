@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 @Slf4j
@@ -33,7 +35,7 @@ public class CreateOrderService {
                     (data.getProducts() != null ? data.getProducts().size() : 0));
 
             Order savedOrder = orderRepository.save(order);
-
+            ordenProducer.modifyProductExistence(savedOrder.getId(), savedOrder.getProducts(), List.of());
             log.info("Orden guardada exitosamente en MongoDB. ID generado: {}, Status inicial: {}",
                     savedOrder.getId(), savedOrder.getStatus());
 

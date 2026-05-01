@@ -1,13 +1,11 @@
 package com.ordenes.ordenservice.controller;
 
 import com.ordenes.ordenservice.dto.CreateOrderDto;
+import com.ordenes.ordenservice.dto.UpdateOrderDto;
 import com.ordenes.ordenservice.dto.UpdateOrderStatusDto;
 import com.ordenes.ordenservice.models.Order;
 import com.ordenes.ordenservice.response.GeneralResponse;
-import com.ordenes.ordenservice.service.CreateOrderService;
-import com.ordenes.ordenservice.service.GetOrderByIdService;
-import com.ordenes.ordenservice.service.GetOrdersByUserService;
-import com.ordenes.ordenservice.service.UpdateOrderStatusService;
+import com.ordenes.ordenservice.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +21,7 @@ public class OrderController {
     private final GetOrderByIdService getOrderByIdService;
     private final GetOrdersByUserService getOrdersByUserService;
     private final UpdateOrderStatusService updateOrderStatusService;
+    private final UpdateOrderService updateOrderService;
 
     // 1. CREAR ORDEN (POST)
     @PostMapping
@@ -68,6 +67,20 @@ public class OrderController {
         return ResponseEntity.ok(GeneralResponse.<Order>builder()
                 .status("SUCCESS")
                 .message("Estatus de la orden actualizado correctamente")
+                .data(orderActualizada)
+                .build());
+    }
+
+    // 5. ACTUALIZAR ORDEN (PUT)
+    @PutMapping("/{id}")
+    public ResponseEntity<GeneralResponse<Order>> updateOrder(
+            @PathVariable String id,
+            @RequestBody UpdateOrderDto dto) {
+
+        Order orderActualizada = updateOrderService.execute(id, dto);
+        return ResponseEntity.ok(GeneralResponse.<Order>builder()
+                .status("SUCCESS")
+                .message("Orden actualizada correctamente")
                 .data(orderActualizada)
                 .build());
     }

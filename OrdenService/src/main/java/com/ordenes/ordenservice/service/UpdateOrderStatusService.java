@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
 @Service
 @Slf4j
 public class UpdateOrderStatusService {
-
+    private final OrdenProducer ordenProducer;
     private final OrdenRepository orderRepository;
 
     public Order execute(String id, UpdateOrderStatusDto data) {
@@ -29,9 +29,11 @@ public class UpdateOrderStatusService {
                 order.getOrderCode(), order.getStatus(), data.getStatus());
 
         try {
+            String oldStatus = order.getStatus();
             order.setStatus(data.getStatus());
             Order updatedOrder = orderRepository.save(order);
 
+            ordenProducer.sendToInformChangeInStatus(order.getId(), oldStatus, data.getStatus());
             log.info("Estado de la orden {} actualizado exitosamente en MongoDB.", updatedOrder.getOrderCode());
             return updatedOrder;
 
