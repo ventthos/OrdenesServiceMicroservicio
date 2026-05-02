@@ -28,6 +28,7 @@ public class CreateOrderService {
                     .status(data.getStatus())
                     .user(data.getUserId())
                     .products(data.getProducts())
+                    .debt(data.getTotalAmount())
                     .build();
 
             log.debug("Procesando orden {} con un total de ${} y {} productos.",

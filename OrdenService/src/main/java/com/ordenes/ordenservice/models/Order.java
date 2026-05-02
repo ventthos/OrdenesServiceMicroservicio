@@ -22,6 +22,7 @@ public class Order {
     private Double totalAmount;
     private String status;
     private String user;
+    private Double debt;
 
     // Relación anidada
     private List<ProductItem> products;

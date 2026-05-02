@@ -22,8 +22,8 @@ public class OrdenProducer {
     private final ObjectMapper objectMapper;
 
     private static final String TOPIC = "order_retry_jobs";
-    private static final String TOPIC_EMAIL_STATUS = "order_status_change";
-    private static final String TOPIC_INVENTORY_CHANGE = "inventory_change";
+    private static final String TOPIC_EMAIL_STATUS = "status_update_events";
+    private static final String TOPIC_INVENTORY_CHANGE = "inventory_update_events";
 
     public void sendToRetry(CreateOrderDto dto) {
         dto.setFromRetry(true);
