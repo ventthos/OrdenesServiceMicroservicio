@@ -32,8 +32,10 @@ public class UpdateOrderStatusService {
             String oldStatus = order.getStatus();
             order.setStatus(data.getStatus());
             Order updatedOrder = orderRepository.save(order);
+            if (data.getStatus() != null && !data.getStatus().equals(oldStatus)) {
+                ordenProducer.sendToInformChangeInStatus(order.getId(), oldStatus, data.getStatus());
+            }
 
-            ordenProducer.sendToInformChangeInStatus(order.getId(), oldStatus, data.getStatus());
             log.info("Estado de la orden {} actualizado exitosamente en MongoDB.", updatedOrder.getOrderCode());
             return updatedOrder;
 

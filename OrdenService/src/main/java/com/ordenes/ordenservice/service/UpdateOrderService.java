@@ -32,6 +32,8 @@ public class UpdateOrderService {
         List<ProductItem> oldProducts = order.getProducts() != null ? new ArrayList<>(order.getProducts()) : new ArrayList<>();
 
         // Actualizamos los campos
+        String oldStatus = order.getStatus();
+
         if (data.getOrderCode() != null) order.setOrderCode(data.getOrderCode());
         if (data.getOrderDate() != null) order.setOrderDate(data.getOrderDate());
         if (data.getTotalAmount() != null) order.setTotalAmount(data.getTotalAmount());
@@ -41,7 +43,11 @@ public class UpdateOrderService {
 
         try {
             Order savedOrder = orderRepository.save(order);
-            
+
+            if (data.getStatus() != null && !data.getStatus().equals(oldStatus)) {
+                ordenProducer.sendToInformChangeInStatus(order.getId(), oldStatus, data.getStatus());
+            }
+
             log.debug("Notificando cambios en el inventario para la orden {}. Productos viejos: {}, Productos nuevos: {}", 
                     id, oldProducts.size(), savedOrder.getProducts() != null ? savedOrder.getProducts().size() : 0);
 
