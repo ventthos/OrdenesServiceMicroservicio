@@ -4,6 +4,18 @@ server:
 spring:
   application:
     name: ordenes-service  # un nombre único para cada servicio
+  datasource:
+    url: jdbc:postgresql://postgres_retry_service_tarea:5432/retry_jobs_db
+    username: postgres
+    password: mysecretpassword
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
 
 eureka:
   client:

@@ -16,16 +16,51 @@ public class CreateOrderService {
 
     private final OrdenRepository orderRepository;
     private final OrdenProducer ordenProducer;
+    private final org.springframework.web.client.RestTemplate restTemplate;
+
     public Order execute(CreateOrderDto data) {
         log.info("Recibida solicitud para crear orden. Código: {}, Usuario: {}",
                 data.getOrderCode(), data.getUserId());
+
+        // Validar Stock
+        List<String> outOfStockProducts = new java.util.ArrayList<>();
+        if (data.getProducts() != null) {
+            for (com.ordenes.ordenservice.models.ProductItem item : data.getProducts()) {
+                try {
+                    String url = "http://productservice/productos/" + item.getProductId();
+                    // Usamos un Map para evitar crear un DTO extra si no es necesario,
+                    // pero necesitamos acceder a data.quantity y data.name
+                    org.springframework.http.ResponseEntity<java.util.Map> response = restTemplate.getForEntity(url, java.util.Map.class);
+                    if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                        java.util.Map responseBody = response.getBody();
+                        java.util.Map productData = (java.util.Map) responseBody.get("data");
+                        if (productData != null) {
+                            int stock = (int) productData.get("quantity");
+                            String productName = (String) productData.get("name");
+                            if (stock < item.getQuantity()) {
+                                outOfStockProducts.add(productName);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("Error al verificar stock para el producto {}: {}", item.getProductId(), e.getMessage());
+                    throw new RuntimeException("Error al verificar stock con el servicio de productos", e);
+                }
+            }
+        }
+
+        if (!outOfStockProducts.isEmpty()) {
+            String message = "hace falta stock de los productos: " + String.join(", ", outOfStockProducts);
+            log.warn(message);
+            throw new IllegalArgumentException(message);
+        }
 
         try {
             Order order = Order.builder()
                     .orderCode(data.getOrderCode())
                     .orderDate(data.getOrderDate())
                     .totalAmount(data.getTotalAmount())
-                    .status(data.getStatus())
+                    .status("Pendiente")
                     .user(data.getUserId())
                     .products(data.getProducts())
                     .debt(data.getTotalAmount())
@@ -42,6 +77,8 @@ public class CreateOrderService {
 
             return savedOrder;
 
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Fallo al persistir la orden {}. Error: {}", data.getOrderCode(), e.getMessage(), e);
             if (!data.isFromRetry()) {

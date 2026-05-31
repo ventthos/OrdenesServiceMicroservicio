@@ -16,7 +16,6 @@ public class CreateOrderDto {
     private String orderCode;
     private String orderDate;
     private Double totalAmount;
-    private String status;
     private String userId;
     private boolean fromRetry;
 

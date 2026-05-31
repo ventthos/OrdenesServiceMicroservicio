@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface OrdenRepository extends MongoRepository<Order, String> {
     List<Order> findByUser(String userEmail);
+    boolean existsByProductsProductId(String productId);
 }

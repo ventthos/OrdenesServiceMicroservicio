@@ -22,6 +22,26 @@ public class OrderController {
     private final GetOrdersByUserService getOrdersByUserService;
     private final UpdateOrderStatusService updateOrderStatusService;
     private final UpdateOrderService updateOrderService;
+    private final CheckProductInOrdersService checkProductInOrdersService;
+    private final GetAllOrdersService getAllOrdersService;
+
+    // 7. OBTENER TODAS LAS ORDENES (GET)
+    @GetMapping
+    public ResponseEntity<GeneralResponse<List<Order>>> getAllOrders() {
+        List<Order> orders = getAllOrdersService.execute();
+        return ResponseEntity.ok(GeneralResponse.<List<Order>>builder()
+                .status("SUCCESS")
+                .message("Todas las órdenes recuperadas")
+                .data(orders)
+                .build());
+    }
+
+    // 6. VERIFICAR SI UN PRODUCTO ESTA EN UNA ORDEN (GET)
+    @GetMapping("/exists-product/{productId}")
+    public ResponseEntity<Boolean> existsProductInOrders(@PathVariable String productId) {
+        boolean exists = checkProductInOrdersService.execute(productId);
+        return ResponseEntity.ok(exists);
+    }
 
     // 1. CREAR ORDEN (POST)
     @PostMapping
