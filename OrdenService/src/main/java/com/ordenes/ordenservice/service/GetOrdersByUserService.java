@@ -15,6 +15,7 @@ import java.util.NoSuchElementException;
 public class GetOrdersByUserService {
 
     private final OrdenRepository orderRepository;
+    private final ProductEnrichmentService productEnrichmentService;
 
     public List<Order> execute(String userEmail) {
         log.info("Consultando historial de órdenes para el usuario: {}", userEmail);
@@ -25,6 +26,8 @@ public class GetOrdersByUserService {
             log.warn("El usuario {} no tiene órdenes registradas en el sistema.", userEmail);
             throw new NoSuchElementException("No se encontraron órdenes para el usuario: " + userEmail);
         }
+
+        productEnrichmentService.enrichOrders(orders);
 
         log.info("Consulta exitosa: Se encontraron {} órdenes para el usuario {}.", orders.size(), userEmail);
         return orders;

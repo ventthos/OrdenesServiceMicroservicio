@@ -13,9 +13,12 @@ import java.util.List;
 @Slf4j
 public class GetAllOrdersService {
     private final OrdenRepository ordenRepository;
+    private final ProductEnrichmentService productEnrichmentService;
 
     public List<Order> execute() {
         log.info("Obteniendo todas las órdenes");
-        return ordenRepository.findAll();
+        List<Order> orders = ordenRepository.findAll();
+        productEnrichmentService.enrichOrders(orders);
+        return orders;
     }
 }

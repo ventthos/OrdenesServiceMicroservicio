@@ -15,6 +15,7 @@ import java.util.NoSuchElementException;
 public class UpdateOrderStatusService {
     private final OrdenProducer ordenProducer;
     private final OrdenRepository orderRepository;
+    private final ProductEnrichmentService productEnrichmentService;
 
     public Order execute(String id, UpdateOrderStatusDto data) {
         log.info("Solicitud de cambio de estado para la orden ID: {}. Nuevo estado propuesto: {}", id, data.getStatus());
@@ -36,6 +37,7 @@ public class UpdateOrderStatusService {
                 ordenProducer.sendToInformChangeInStatus(order.getId(), oldStatus, data.getStatus());
             }
 
+            productEnrichmentService.enrichOrder(updatedOrder);
             log.info("Estado de la orden {} actualizado exitosamente en MongoDB.", updatedOrder.getOrderCode());
             return updatedOrder;
 

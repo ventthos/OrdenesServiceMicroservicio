@@ -18,6 +18,7 @@ public class UpdateOrderService {
 
     private final OrdenRepository orderRepository;
     private final OrdenProducer ordenProducer;
+    private final ProductEnrichmentService productEnrichmentService;
 
     public Order execute(String id, UpdateOrderDto data) {
         log.info("Recibida solicitud para actualizar orden ID: {}", id);
@@ -65,6 +66,7 @@ public class UpdateOrderService {
                 log.debug("Los productos no cambiaron, no se envía evento a Kafka.");
             }
             
+            productEnrichmentService.enrichOrder(savedOrder);
             log.info("Orden {} actualizada exitosamente en MongoDB.", savedOrder.getId());
             return savedOrder;
 

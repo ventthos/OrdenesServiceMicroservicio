@@ -40,6 +40,7 @@ public class CreateOrderService {
                             if (productData != null) {
                                 int stock = (int) productData.get("quantity");
                                 String productName = (String) productData.get("name");
+                                item.setName(productName);
                                 if (stock < item.getQuantity()) {
                                     outOfStockProducts.add(productName);
                                 }
@@ -55,7 +56,7 @@ public class CreateOrderService {
 
             // Si es un error de negocio (falta de stock real), lanzamos IllegalArgumentException
             if (!outOfStockProducts.isEmpty()) {
-                String message = "hace falta stock de los productos: " + String.join(", ", outOfStockProducts);
+                String message = "Hace falta stock de los productos: " + String.join(", ", outOfStockProducts);
                 log.warn(message);
                 throw new IllegalArgumentException(message);
             }
