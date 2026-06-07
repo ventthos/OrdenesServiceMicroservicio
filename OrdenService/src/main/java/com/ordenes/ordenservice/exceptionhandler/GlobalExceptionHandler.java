@@ -32,4 +32,15 @@ public class GlobalExceptionHandler {
                         .message(ex.getMessage())
                         .build());
     }
+
+    @ExceptionHandler(RetryScheduledException.class)
+    public ResponseEntity<GeneralResponse<Void>> handleRetryScheduled(
+            RetryScheduledException ex) {
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(GeneralResponse.<Void>builder()
+                        .status("PENDING")
+                        .message(ex.getMessage())
+                        .build());
+    }
 }

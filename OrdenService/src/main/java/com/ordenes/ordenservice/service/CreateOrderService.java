@@ -1,6 +1,7 @@
 package com.ordenes.ordenservice.service;
 
 import com.ordenes.ordenservice.dto.CreateOrderDto;
+import com.ordenes.ordenservice.exceptionhandler.RetryScheduledException;
 import com.ordenes.ordenservice.models.Order;
 import com.ordenes.ordenservice.repository.OrdenRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,40 +23,44 @@ public class CreateOrderService {
         log.info("Recibida solicitud para crear orden. Código: {}, Usuario: {}",
                 data.getOrderCode(), data.getUserId());
 
-        // Validar Stock
-        List<String> outOfStockProducts = new java.util.ArrayList<>();
-        if (data.getProducts() != null) {
-            for (com.ordenes.ordenservice.models.ProductItem item : data.getProducts()) {
-                try {
-                    String url = "http://productservice/productos/" + item.getProductId();
-                    // Usamos un Map para evitar crear un DTO extra si no es necesario,
-                    // pero necesitamos acceder a data.quantity y data.name
-                    org.springframework.http.ResponseEntity<java.util.Map> response = restTemplate.getForEntity(url, java.util.Map.class);
-                    if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                        java.util.Map responseBody = response.getBody();
-                        java.util.Map productData = (java.util.Map) responseBody.get("data");
-                        if (productData != null) {
-                            int stock = (int) productData.get("quantity");
-                            String productName = (String) productData.get("name");
-                            if (stock < item.getQuantity()) {
-                                outOfStockProducts.add(productName);
+        // Envolvemos TODO el flujo de negocio en el try principal para asegurar el reintento ante cualquier fallo técnico
+        try {
+
+            // 1. Validar Stock
+            List<String> outOfStockProducts = new java.util.ArrayList<>();
+            if (data.getProducts() != null) {
+                for (com.ordenes.ordenservice.models.ProductItem item : data.getProducts()) {
+                    try {
+                        String url = "http://product-service/productos/" + item.getProductId();
+                        org.springframework.http.ResponseEntity<java.util.Map> response = restTemplate.getForEntity(url, java.util.Map.class);
+
+                        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                            java.util.Map responseBody = response.getBody();
+                            java.util.Map productData = (java.util.Map) responseBody.get("data");
+                            if (productData != null) {
+                                int stock = (int) productData.get("quantity");
+                                String productName = (String) productData.get("name");
+                                if (stock < item.getQuantity()) {
+                                    outOfStockProducts.add(productName);
+                                }
                             }
                         }
+                    } catch (Exception e) {
+                        log.error("Error al verificar stock para el producto {}: {}", item.getProductId(), e.getMessage());
+                        // Lanzamos una excepción que será atrapada por el catch principal externo
+                        throw new RuntimeException("Error en la comunicación con el servicio de productos", e);
                     }
-                } catch (Exception e) {
-                    log.error("Error al verificar stock para el producto {}: {}", item.getProductId(), e.getMessage());
-                    throw new RuntimeException("Error al verificar stock con el servicio de productos", e);
                 }
             }
-        }
 
-        if (!outOfStockProducts.isEmpty()) {
-            String message = "hace falta stock de los productos: " + String.join(", ", outOfStockProducts);
-            log.warn(message);
-            throw new IllegalArgumentException(message);
-        }
+            // Si es un error de negocio (falta de stock real), lanzamos IllegalArgumentException
+            if (!outOfStockProducts.isEmpty()) {
+                String message = "hace falta stock de los productos: " + String.join(", ", outOfStockProducts);
+                log.warn(message);
+                throw new IllegalArgumentException(message);
+            }
 
-        try {
+            // 2. Persistir Orden
             Order order = Order.builder()
                     .orderCode(data.getOrderCode())
                     .orderDate(data.getOrderDate())
@@ -78,11 +83,16 @@ public class CreateOrderService {
             return savedOrder;
 
         } catch (IllegalArgumentException e) {
+            // Error de negocio (Falta de stock): No debe reintentarse en la cola, se propaga directamente
             throw e;
         } catch (Exception e) {
-            log.error("Fallo al persistir la orden {}. Error: {}", data.getOrderCode(), e.getMessage(), e);
+            // Fallos de infraestructura/comunicación (Base de datos caída, error de red de RestTemplate, etc.)
+            log.error("Fallo durante el procesamiento de la orden {}. Error: {}", data.getOrderCode(), e.getMessage(), e);
             if (!data.isFromRetry()) {
                 ordenProducer.sendToRetry(data);
+                throw new RetryScheduledException(
+                        "Hubo un error. Se reintentará crear la orden lo más pronto posible"
+                );
             }
             throw new RuntimeException("Error al crear la orden en el sistema", e);
         }
