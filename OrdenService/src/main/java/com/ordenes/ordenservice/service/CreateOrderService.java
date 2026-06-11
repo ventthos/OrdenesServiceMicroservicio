@@ -23,6 +23,22 @@ public class CreateOrderService {
         log.info("Recibida solicitud para crear orden. Código: {}, Usuario: {}",
                 data.getOrderCode(), data.getUserId());
 
+        // 0. Validar montos y cantidades
+        if (data.getTotalAmount() == null || data.getTotalAmount() < 0) {
+            throw new IllegalArgumentException("El monto total de la orden no puede ser negativo.");
+        }
+
+        if (data.getProducts() != null) {
+            for (com.ordenes.ordenservice.models.ProductItem item : data.getProducts()) {
+                if (item.getQuantity() == null || item.getQuantity() <= 0) {
+                    throw new IllegalArgumentException("La cantidad del producto con ID " + item.getProductId() + " debe ser mayor a 0.");
+                }
+                if (item.getPrice() == null || item.getPrice() < 0) {
+                    throw new IllegalArgumentException("El precio del producto con ID " + item.getProductId() + " no puede ser negativo.");
+                }
+            }
+        }
+
         // Envolvemos TODO el flujo de negocio en el try principal para asegurar el reintento ante cualquier fallo técnico
         try {
 
